@@ -1,0 +1,7 @@
+# WhisperX and dependencies
+# torch is installed separately by setup.ps1 with the CUDA index URL.
+# pyannote.audio is pulled in by whisperx — don't pin it here.
+# Use whisperx >= 3.4 because 3.1.5 was yanked and older versions pin av==11
+# which has no Windows wheel for Python 3.11.
+whisperx>=3.4.0
+python-dotenv>=1.0

@@ -1,0 +1,24 @@
+venv/
+.env
+__pycache__/
+*.pyc
+
+# Local working data - never commit
+out/
+models/
+audio/
+audio_joined/
+transcripts/
+*.wav
+*.WAV
+*.mp3
+*.m4a
+*.flac
+*.opus
+
+# Build artefacts
+node_modules/
+package*.json
+build_summary.js
+SUMMARY.md
+SUMMARY.docx
