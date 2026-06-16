@@ -7,9 +7,6 @@ of Max Bain; this repository contains a Windows installer script, a Python
 entry point, a step-by-step guide, and a generic DPIA template, designed
 to make WhisperX easier to pick up if you have never used a command line.
 
-If you are comfortable with PowerShell, skip to
-[the quick version at the bottom](#quick-version-for-experienced-users).
-
 **What this is for.** Transcribing research audio (interviews, focus groups,
 workshops) on your own computer. The audio never leaves the device.
 
@@ -18,8 +15,51 @@ least 8 GB of memory. Most gaming laptops from the last five years qualify.
 If you are unsure, see [How do I check whether I have a suitable graphics
 card?](#how-do-i-check-whether-i-have-a-suitable-graphics-card) at the bottom.
 
-**How long it takes.** About half a working day for someone who has never
-done this before. About one hour if you have.
+**How long it takes.** About half a working day if you follow the detailed
+walkthrough below. About an hour if you just want it working and are
+comfortable copy-pasting into a terminal.
+
+---
+
+## The fast version (if you just want it running)
+
+If you do not want a tutorial and just want the commands to copy in order,
+this is the whole install. Each line is explained in detail in Parts 1–5
+below — come back to those if any step breaks.
+
+```powershell
+# 1. PREREQUISITES (do these once, each is a free, official download).
+#    https://www.python.org/downloads/release/python-3119/  (tick "Add to PATH")
+#    https://www.nvidia.com/Download/index.aspx             (latest driver)
+#    Then in an *administrator* PowerShell:
+winget install Gyan.FFmpeg
+
+# 2. DOWNLOAD THIS REPO and unzip somewhere sensible:
+#    https://github.com/DrIanKellar/whisperx-local-setup → green Code button → Download ZIP
+
+# 3. INSTALL WHISPERX. Open a fresh PowerShell, cd into the unzipped folder, then:
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned   # type Y when prompted
+.\setup.ps1                                            # 5–15 minutes, ~3 GB
+
+# 4. HUGGING FACE.
+#    a. Make a free account at https://huggingface.co/join
+#    b. While signed in, accept the licence on all three pages
+#       (click "Agree and access repository" on each):
+#         https://huggingface.co/pyannote/segmentation-3.0
+#         https://huggingface.co/pyannote/speaker-diarization-community-1
+#         https://huggingface.co/pyannote/speaker-diarization-3.1
+#    c. Make a Read token at https://huggingface.co/settings/tokens
+#    d. Paste it into .env:
+copy .env.example .env
+notepad .env                                           # replace hf_replace_me with your token
+
+# 5. TRANSCRIBE. Put your audio file in this folder, then:
+.\venv\Scripts\Activate.ps1
+python transcribe.py "your-audio-file.wav" --min-speakers 2 --max-speakers 8
+```
+
+That is the whole install. If you would rather walk through each step with
+explanations and screenshots-worth of context, read on.
 
 ---
 
@@ -375,25 +415,6 @@ This toolchain is suitable for use with research interview data when:
   analysis or sharing.
 
 For the longer explainer of why and when to use this tool, see `POST.md`.
-
----
-
-## Quick version (for experienced users)
-
-```powershell
-# Prerequisites: Python 3.11, ffmpeg, NVIDIA driver up to date
-
-git clone https://github.com/DrIanKellar/whisperx-local-setup
-cd whisperx-local-setup
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-.\setup.ps1
-# Accept https://huggingface.co/pyannote/segmentation-3.0
-# Accept https://huggingface.co/pyannote/speaker-diarization-community-1
-# Accept https://huggingface.co/pyannote/speaker-diarization-3.1
-# Save Read token to .env (copy .env.example and edit)
-.\venv\Scripts\Activate.ps1
-python transcribe.py audio.wav --min-speakers 2 --max-speakers 8
-```
 
 ---
 
