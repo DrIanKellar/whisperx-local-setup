@@ -137,6 +137,22 @@ its dependencies, and the GPU-enabled version of PyTorch.
 5. The first line asks "Do you want to change the execution policy?". Type
    `Y` and press Enter. This is a one-time thing and lets Windows run local
    scripts.
+
+   **If the execution policy is locked by your organisation** (common on
+   university or work machines, you will get a "this policy is set by group
+   policy" error), you cannot change it. Two ways round it:
+
+   - **Run the script with a one-off bypass** (does not change the system
+     setting):
+
+     ```powershell
+     powershell -ExecutionPolicy Bypass -File .\setup.ps1
+     ```
+
+   - **Or open `setup.ps1` in Notepad, copy its contents, and paste
+     directly into PowerShell.** The commands run line by line without any
+     script policy applying.
+
 6. The setup script now runs. It will:
    - Check that Python, ffmpeg, and the NVIDIA driver are detected.
    - Create a "virtual environment". This is just a self-contained area for
@@ -172,13 +188,20 @@ licensed for research use.
 
 ### 4.2 Accept the model licences
 
-While signed in:
+While signed in to Hugging Face, visit each of the three pages below and
+click the green **"Agree and access repository"** button. Each page updates
+to say you have access. All three are free and licensed for research use.
 
-1. Go to **https://huggingface.co/pyannote/segmentation-3.0**. Click the
-   green **"Agree and access repository"** button near the top. The page
-   updates to say you have access.
-2. Go to **https://huggingface.co/pyannote/speaker-diarization-3.1**. Do the
-   same thing.
+1. **https://huggingface.co/pyannote/segmentation-3.0** — the voice activity
+   detection model.
+2. **https://huggingface.co/pyannote/speaker-diarization-community-1** —
+   the speaker labelling model that current WhisperX uses by default.
+3. **https://huggingface.co/pyannote/speaker-diarization-3.1** — an older
+   diarisation model. Some versions of WhisperX fall back to this one;
+   accept it now and you do not have to think about it later.
+
+Accepting all three takes about a minute and saves you a confusing
+authentication error during your first transcription.
 
 ### 4.3 Create the token
 
@@ -223,16 +246,28 @@ personal access key.
 
    The prompt now starts with `(venv)`. This means the tool is ready.
 
-3. Put your audio file somewhere you can find it. The project folder is
-   fine.
-4. Run:
+3. Get your audio file ready. You can either:
+
+   - **Copy the audio file into the project folder** (the same folder as
+     `transcribe.py`). Then you only need the filename, e.g. `"interview.wav"`.
+   - **Or leave it where it is**, and use the file's full address (path).
+     The easiest way to get the full address is to find the file in
+     Windows Explorer, hold Shift, right-click it, and choose
+     **"Copy as path"**. Then paste it into PowerShell — the double quotes
+     are already included.
+
+4. Run one of the following, depending on which approach you picked:
 
    ```powershell
-   python transcribe.py "your-audio-file.wav"
+   # If the audio file is in the project folder
+   python transcribe.py "interview.wav"
+
+   # If the audio file is elsewhere — paste its full path
+   python transcribe.py "C:\Users\You\Documents\interview.wav"
    ```
 
-   Replace `your-audio-file.wav` with the actual filename. Keep the double
-   quotes around it.
+   Either way, **keep the double quotes around the filename or path** —
+   they handle spaces and special characters.
 
 5. **The first time you ever run this**, the tool downloads about 3 GB of
    model files. This takes 5 to 15 minutes. The progress bars are normal.
@@ -294,8 +329,11 @@ It should now say `True`.
 **Diarisation says "0 speakers" or fails with an authentication error.**
 Three things to check, in this order:
 
-1. Did you click "Agree and access" on **both** Hugging Face model pages
-   (segmentation-3.0 and speaker-diarization-3.1)?
+1. Did you click "Agree and access" on **all three** Hugging Face model
+   pages? (`pyannote/segmentation-3.0`,
+   `pyannote/speaker-diarization-community-1`, and
+   `pyannote/speaker-diarization-3.1`.) If the error message names a
+   specific model, that is the one you missed.
 2. Did you create a Read-type token (not Write or Fine-grained)?
 3. Is the `.env` file in the project folder (not the folder above), named
    exactly `.env` (not `.env.txt`), with the token pasted in correctly?
@@ -350,6 +388,7 @@ cd whisperx-local-setup
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 .\setup.ps1
 # Accept https://huggingface.co/pyannote/segmentation-3.0
+# Accept https://huggingface.co/pyannote/speaker-diarization-community-1
 # Accept https://huggingface.co/pyannote/speaker-diarization-3.1
 # Save Read token to .env (copy .env.example and edit)
 .\venv\Scripts\Activate.ps1
